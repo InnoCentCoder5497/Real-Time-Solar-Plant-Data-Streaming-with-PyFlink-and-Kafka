@@ -4,7 +4,7 @@ import json
 
 TOPIC_NAME = 'test-topic'
 
-if __name__ == '__main__':
+def main():
     print('connecting to kafka')
     kafka_broker = KafkaProducer(bootstrap_servers='localhost:9092', value_serializer=lambda v: json.dumps(v).encode('utf-8'))
     print('starting msg send')
@@ -20,4 +20,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print('Stopped producer')
         kafka_broker.flush()
+
+if __name__ == '__main__':
+    main()
             
