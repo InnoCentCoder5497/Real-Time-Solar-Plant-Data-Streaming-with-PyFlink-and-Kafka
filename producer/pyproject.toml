@@ -7,6 +7,7 @@ readme = "README.md"
 
 [tool.poetry.scripts]
 my-script = "producer.producer_module:main"
+start-producer = "producer.producer_module:stream_plant_data"
 
 [tool.poetry.dependencies]
 python = "^3.12"

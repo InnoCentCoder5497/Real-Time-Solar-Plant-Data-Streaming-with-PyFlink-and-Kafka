@@ -1,8 +1,16 @@
 import time
 from kafka import KafkaProducer
 import json
+import argparse
 
 TOPIC_NAME = 'test-topic'
+
+def stream_plant_data():
+    parser = argparse.ArgumentParser(description="Plant data streaming Producer")
+    parser.add_argument("--plant_id", required=True, help="The plant id to identify the Plant file to stream from")
+    
+    args = parser.parse_args()
+    print(f'{args}')
 
 def main():
     print('connecting to kafka')
