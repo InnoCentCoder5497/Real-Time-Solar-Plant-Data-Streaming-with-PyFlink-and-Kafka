@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "plant-data-producer"
+version = "0.1.0"
+description = ""
+authors = ["InnoCentCoder5497  <innocentcoder5497@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+kafka-python = "^2.1.5"
+pandas = "^2.2.3"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
+[tool.poetry.scripts]
+start-producer = "plant_data_producer.data_stream_producer:stream_plant_data"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

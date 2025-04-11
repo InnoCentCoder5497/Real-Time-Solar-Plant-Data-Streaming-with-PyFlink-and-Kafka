@@ -1,2 +1,5 @@
 **/.venv/
 **/data/
+**/temp_test/
+plant_data_producer/tmp
+*.lock
