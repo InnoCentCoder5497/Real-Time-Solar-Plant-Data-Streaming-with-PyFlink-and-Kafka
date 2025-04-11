@@ -28,6 +28,39 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
     networks:
       - ms-net
+
+  jobmanager:
+    build:
+      context: ./flink
+    image: custom-flink-python:1.17
+    container_name: jobmanager
+    command: jobmanager
+    ports:
+      - "8082:8081"
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    volumes:
+      - ./flink-connectors/flink-connector-kafka-3.0.1-1.17.jar:/opt/flink/lib/flink-connector-kafka-3.0.1-1.17.jar
+      - ./flink-connectors/flink-sql-connector-kafka-1.17.2.jar:/opt/flink/lib/flink-sql-connector-kafka-1.17.2.jar
+    depends_on:
+      - kafka
+    networks:
+      - ms-net
+
+  taskmanager:
+    image: custom-flink-python:1.17
+    container_name: taskmanager
+    command: taskmanager
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - TASK_MANAGER_NUMBER_OF_TASK_SLOTS=4
+    volumes:
+      - ./flink-connectors/flink-connector-kafka-3.0.1-1.17.jar:/opt/flink/lib/flink-connector-kafka-3.0.1-1.17.jar
+      - ./flink-connectors/flink-sql-connector-kafka-1.17.2.jar:/opt/flink/lib/flink-sql-connector-kafka-1.17.2.jar
+    depends_on:
+      - jobmanager
+    networks:
+      - ms-net
     
 
 networks:

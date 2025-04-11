@@ -1,5 +1,8 @@
 **/.venv/
 **/data/
+**/flink-connectors/
 **/temp_test/
 plant_data_producer/tmp
 *.lock
+.python-version
+Commands.txt
