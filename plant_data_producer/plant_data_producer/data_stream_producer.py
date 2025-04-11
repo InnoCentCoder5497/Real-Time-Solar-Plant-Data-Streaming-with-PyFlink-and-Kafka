@@ -5,7 +5,9 @@ import pickle
 import pandas as pd
 import os
 import threading
-# from kafka import KafkaProducer
+from kafka import KafkaProducer
+
+kafka_producer = None
 
 class DataGenerator:
     def __init__(self, plant_id, date_time_col = 'DATE_TIME'):
@@ -74,28 +76,49 @@ class DataGenerator:
             yield dt, generator_df, weather_df    
             
             
-def send_data_to_kafka(df, plant_id, data_source):
+def send_data_to_kafka(df, plant_id, data_source, mode = 'prod'):
     print(f'{data_source}: Transmitting data for Plant ID {plant_id}')
+    
+    KAFKA_TOPIC = 'generator-topic'
+    if data_source == 'WEATHER':
+        KAFKA_TOPIC = 'weather-topic'    
+    
     for _, x in df.iterrows():
         data_point = x.to_dict()
-        data_key = data_point.pop('SOURCE_KEY')
-        partition_key = data_point.pop('PLANT_ID')
+        source_key = data_point.pop('SOURCE_KEY')
+        plant_key = data_point.pop('PLANT_ID')
+        key = {'plant_id': plant_key, 'source_key': source_key}
         data_point['DATE_TIME'] = data_point['DATE_TIME'].strftime('%Y-%m-%d %H:%M:%S')
-        print(f'{data_source}: Data point Key={data_key}, Parition key={partition_key}, value={json.dumps(data_point)}')
+        
+        if mode == 'test':
+            print(f'DRYRUN: sent data for {data_source} Data point Key={key}, value={data_point}')
+        else:
+            kafka_producer.send(KAFKA_TOPIC, value=data_point, key=key)
 
 def stream_plant_data():
+    global kafka_producer
     parser = argparse.ArgumentParser(description="Plant data streaming Producer")
     parser.add_argument("--plant_id", required=True, help="The plant id to identify the Plant file to stream from")
+    parser.add_argument("--mode", required=False, default='prod', help="Used to run the producer in test mode (set value to test)")
     
     args = parser.parse_args()
 
     plant_id = args.plant_id
+    mode = args.mode
+    
+    if mode != 'test':
+        kafka_producer = KafkaProducer(
+                            bootstrap_servers='localhost:9092', 
+                            key_serializer = lambda x: json.dumps(x).encode('utf-8'),
+                            value_serializer=lambda v: json.dumps(v).encode('utf-8')
+                        )
+    
     print(f'Starting Stream for plant_id = {plant_id}')
     plant_data = DataGenerator(plant_id=plant_id)
     for timestamp, gen_data, weather_data in plant_data:
-        
-        t1 = threading.Thread(target=send_data_to_kafka, args=(gen_data, plant_id, 'GENERATOR'))
-        t2 = threading.Thread(target=send_data_to_kafka, args=(weather_data, plant_id, 'WEATHER'))
+        print(f'INFO: Data recieved at {timestamp}')
+        t1 = threading.Thread(target=send_data_to_kafka, args=(gen_data, plant_id, 'GENERATOR', mode))
+        t2 = threading.Thread(target=send_data_to_kafka, args=(weather_data, plant_id, 'WEATHER', mode))
         
         t1.start()
         t2.start()
@@ -104,4 +127,4 @@ def stream_plant_data():
         t2.join()
         
         print('INFO: Waiting for next data point')
-        time.sleep(5)
+        time.sleep(60)
