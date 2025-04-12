@@ -40,8 +40,8 @@ services:
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
     volumes:
-      - ./flink-connectors/flink-connector-kafka-3.0.1-1.17.jar:/opt/flink/lib/flink-connector-kafka-3.0.1-1.17.jar
-      - ./flink-connectors/flink-sql-connector-kafka-1.17.2.jar:/opt/flink/lib/flink-sql-connector-kafka-1.17.2.jar
+      - ./flink-connectors:/opt/flink/user-libs/
+      - ./flink-jobs/src/flink_jobs/kafka-reader.py:/opt/flink/jobs/kafka-reader.py
     depends_on:
       - kafka
     networks:
@@ -55,8 +55,8 @@ services:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
       - TASK_MANAGER_NUMBER_OF_TASK_SLOTS=4
     volumes:
-      - ./flink-connectors/flink-connector-kafka-3.0.1-1.17.jar:/opt/flink/lib/flink-connector-kafka-3.0.1-1.17.jar
-      - ./flink-connectors/flink-sql-connector-kafka-1.17.2.jar:/opt/flink/lib/flink-sql-connector-kafka-1.17.2.jar
+      - ./flink-connectors:/opt/flink/user-libs/
+      - ./flink-jobs/src/flink_jobs/kafka-reader.py:/opt/flink/jobs/kafka-reader.py
     depends_on:
       - jobmanager
     networks:
