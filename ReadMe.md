@@ -23,6 +23,13 @@ This side project simulates real-time streaming of solar plant data using Python
 - Feed a Grafana dashboard using processed metrics for live monitoring.
 
 ## Steps
+- **TL;DR**
+    - Get flink connectors
+    - Download data
+    - Run Docker compose up
+    - run setup.sh
+    - Start Producer
+
 - **Download flink connectors**
 
     Download flink connectors for Kafka to consume data from Kafka topics. Use the below code to get connectors:
@@ -72,4 +79,12 @@ This side project simulates real-time streaming of solar plant data using Python
     Submit the Consumer Job
     ```bash
     docker exec jobmanager flink run --python /opt/flink/jobs/kafka-reader.py
+    ```
+    This returns a JOB_ID which can be used to stop the job.
+
+- **Stopping the consumer Job**
+
+    To stop the flink job
+    ```bash
+    docker exec jobmanager flink cancel <JOB_ID>
     ```
