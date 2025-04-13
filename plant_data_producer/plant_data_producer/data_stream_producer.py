@@ -90,6 +90,9 @@ def send_data_to_kafka(df, plant_id, data_source, mode = 'prod'):
         key = {'plant_id': plant_key, 'source_key': source_key}
         data_point['DATE_TIME'] = data_point['DATE_TIME'].strftime('%Y-%m-%d %H:%M:%S')
         
+        for k, v in key.items():
+            data_point[k.upper()] = v
+        
         if mode == 'test':
             print(f'DRYRUN: sent data for {data_source} Data point Key={key}, value={data_point}')
         else:
