@@ -41,7 +41,7 @@ services:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
     volumes:
       - ./flink-connectors:/opt/flink/user-libs/
-      - ./flink-jobs/src/flink_jobs/kafka-reader.py:/opt/flink/jobs/kafka-reader.py
+      - ./flink-jobs/src/flink_jobs:/opt/flink/jobs/
     depends_on:
       - kafka
     networks:
@@ -56,7 +56,7 @@ services:
       - TASK_MANAGER_NUMBER_OF_TASK_SLOTS=4
     volumes:
       - ./flink-connectors:/opt/flink/user-libs/
-      - ./flink-jobs/src/flink_jobs/kafka-reader.py:/opt/flink/jobs/kafka-reader.py
+      - ./flink-jobs/src/flink_jobs:/opt/flink/jobs/
     depends_on:
       - jobmanager
     networks:
