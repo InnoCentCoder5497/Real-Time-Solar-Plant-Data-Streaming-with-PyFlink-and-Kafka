@@ -70,7 +70,6 @@ class DataGenerator:
         while True:
             dt = self.last_checkpoint
             generator_df, weather_df = self.get_timestamp_data(dt)
-            
             self.last_checkpoint = dt + self.time_delta
             self._save_checkpoint()
             yield dt, generator_df, weather_df    
@@ -120,14 +119,20 @@ def stream_plant_data():
     plant_data = DataGenerator(plant_id=plant_id)
     for timestamp, gen_data, weather_data in plant_data:
         print(f'INFO: Data recieved at {timestamp}')
-        t1 = threading.Thread(target=send_data_to_kafka, args=(gen_data, plant_id, 'GENERATOR', mode))
-        t2 = threading.Thread(target=send_data_to_kafka, args=(weather_data, plant_id, 'WEATHER', mode))
         
-        t1.start()
-        t2.start()
+        t1 = t2 = None
+        if gen_data is not None:
+            t1 = threading.Thread(target=send_data_to_kafka, args=(gen_data, plant_id, 'GENERATOR', mode))
+            t1.start()
+    
+        if weather_data is not None:
+            t2 = threading.Thread(target=send_data_to_kafka, args=(weather_data, plant_id, 'WEATHER', mode))
+            t2.start()
         
-        t1.join()
-        t2.join()
+        if t1:
+            t1.join()
+        if t2:
+            t2.join()
         
         print('INFO: Waiting for next data point')
         time.sleep(5)
