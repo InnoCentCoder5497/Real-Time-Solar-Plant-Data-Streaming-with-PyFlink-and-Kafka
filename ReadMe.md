@@ -79,7 +79,7 @@ This side project simulates real-time streaming of solar plant data using Python
 
     Submit the Consumer Job
     ```bash
-    docker exec jobmanager flink run --python /opt/flink/jobs/kafka-reader.py
+    docker exec jobmanager flink run --python /opt/flink/jobs/kafka-table-reader.py
     ```
     This returns a JOB_ID which can be used to stop the job.
 
