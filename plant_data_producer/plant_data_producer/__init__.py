@@ -8,7 +8,7 @@ class DataGenerator:
         self.date_col = date_time_col
         
         self.data_path = data_path
-        
+        self.last_checkpoint = None
         self.checkpoint_file = f'./tmp/checkpoint_plant_{source}_{plant_id}.pkl'
         
         try:
@@ -20,7 +20,7 @@ class DataGenerator:
             # get ordered data time points
             self.last_checkpoint = min(self.weather_groups.groups.keys())
             
-            self.time_delta = pd.Timedelta('15 min')
+            self.time_delta = pd.Timedelta('1 min')
             
             if os.path.exists(self.checkpoint_file):
                 self._load_checkpoint()
