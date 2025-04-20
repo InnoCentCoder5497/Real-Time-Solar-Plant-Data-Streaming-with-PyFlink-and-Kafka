@@ -69,9 +69,10 @@ This side project simulates real-time streaming of solar plant data using Python
 
 - **Start producer job**
 
-    Start the producer job
+    Start the producer job for both Generator and Weather sensors.
     ```bash
-    poetry run start-producer --plant_id 4135001
+    poetry run start-producer-generator --plant_id 4135001
+    poetry run start-producer-weather  --plant_id 4135001
     ```
 
 - **Start consumer job**

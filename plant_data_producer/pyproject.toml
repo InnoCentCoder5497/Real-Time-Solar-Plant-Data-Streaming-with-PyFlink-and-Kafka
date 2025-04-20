@@ -14,7 +14,8 @@ pandas = "^2.2.3"
 ipykernel = "^6.29.5"
 
 [tool.poetry.scripts]
-start-producer = "plant_data_producer.data_stream_producer:stream_plant_data"
+start-producer-generator = "plant_data_producer.data_stream_producer:stream_plant_data"
+start-producer-weather = "plant_data_producer.data_stream_weather:stream_plant_data_weather"
 
 [build-system]
 requires = ["poetry-core"]

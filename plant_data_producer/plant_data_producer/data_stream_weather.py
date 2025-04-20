@@ -5,12 +5,12 @@ import threading
 from kafka import KafkaProducer
 from . import DataGenerator
 
-kafka_producer = None           
-            
+kafka_producer = None
+          
 def send_data_to_kafka(df, plant_id, data_source, mode = 'prod'):
     print(f'{data_source}: Transmitting data for Plant ID {plant_id}')
-    
-    KAFKA_TOPIC = 'generator-topic'
+
+    KAFKA_TOPIC = 'weather-topic'    
     
     for _, x in df.iterrows():
         data_point = x.to_dict()
@@ -27,7 +27,7 @@ def send_data_to_kafka(df, plant_id, data_source, mode = 'prod'):
         else:
             kafka_producer.send(KAFKA_TOPIC, value=data_point, key=key)
 
-def stream_plant_data():
+def stream_plant_data_weather():
     global kafka_producer
     parser = argparse.ArgumentParser(description="Plant data streaming Producer")
     parser.add_argument("--plant_id", required=True, help="The plant id to identify the Plant file to stream from")
@@ -38,8 +38,8 @@ def stream_plant_data():
     plant_id = args.plant_id
     mode = args.mode
     
-    data_path = f'../data/Plant_{plant_id}_Generation_Data.csv'
-    source = 'GENERATOR'
+    data_path = f'../data/Plant_{plant_id}_Weather_Sensor_Data.csv'
+    source = 'WEATHER'
     
     if mode != 'test':
         kafka_producer = KafkaProducer(
@@ -50,11 +50,12 @@ def stream_plant_data():
     
     print(f'Starting Stream for plant_id = {plant_id}')
     plant_data = DataGenerator(data_path=data_path, plant_id=plant_id, source=source)
-    for timestamp, gen_data in plant_data:
+    for timestamp, weather_data in plant_data:
         print(f'INFO: Data recieved at {timestamp}')
-        t1 = threading.Thread(target=send_data_to_kafka, args=(gen_data, plant_id, source, mode))
-        t1.start()
-        t1.join()
+
+        t2 = threading.Thread(target=send_data_to_kafka, args=(weather_data, plant_id,source, mode))
+        t2.start()
+        t2.join()
         
         print('INFO: Waiting for next data point')
         time.sleep(5)
