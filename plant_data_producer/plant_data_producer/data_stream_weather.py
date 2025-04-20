@@ -12,6 +12,10 @@ def send_data_to_kafka(df, plant_id, data_source, mode = 'prod'):
 
     KAFKA_TOPIC = 'weather-topic'    
     
+    if df is None:
+        print('WARN: No data point')
+        return 
+    
     for _, x in df.iterrows():
         data_point = x.to_dict()
         source_key = data_point.pop('SOURCE_KEY')
