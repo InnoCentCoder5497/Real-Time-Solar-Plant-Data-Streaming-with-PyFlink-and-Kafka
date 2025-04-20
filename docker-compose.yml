@@ -61,7 +61,41 @@ services:
       - jobmanager
     networks:
       - ms-net
-    
 
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: timescaledb
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: solar_data
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+      - ./pg-scripts/init-timescale.sql:/docker-entrypoint-initdb.d/init-timescale.sql
+      - ./pg-scripts/schema_init.sql:/docker-entrypoint-initdb.d/schema_init.sql
+
+    restart: unless-stopped
+    networks:
+      - ms-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@solar-data.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - timescaledb
+    restart: unless-stopped
+    networks:
+      - ms-net
+
+volumes:
+  timescale_data:
+    
 networks:
   ms-net:
