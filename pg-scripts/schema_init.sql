@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS solar.daily_yield
     "plant_id" integer,
     "source_key" character varying,
     "date_time" timestamp without time zone,
-    "yield" double precision,
     rolling_sum double precision,
     PRIMARY KEY ("plant_id", "source_key", "date_time")
 );

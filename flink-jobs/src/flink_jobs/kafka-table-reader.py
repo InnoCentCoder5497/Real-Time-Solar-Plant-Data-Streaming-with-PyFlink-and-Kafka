@@ -64,7 +64,6 @@ def read_from_kafka(env: TableEnvironment):
                         PLANT_ID INT,
                         SOURCE_KEY STRING,
                         DATE_TIME TIMESTAMP(3),
-                        YIELD DOUBLE,
                         rolling_sum DOUBLE
                     ) WITH {get_jdbc_info('solar', 'daily_yield')}
                     """    
@@ -109,15 +108,14 @@ def read_from_kafka(env: TableEnvironment):
                     SELECT
                         PLANT_ID,
                         SOURCE_KEY,
-                        DATE_TIME,
-                        DAILY_YIELD,
-                        SUM(DAILY_YIELD) OVER (
-                            PARTITION BY PLANT_ID, SOURCE_KEY
-                            ORDER BY DATE_TIME
-                            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-                        ) AS rolling_sum
+                        TUMBLE_START(DATE_TIME, INTERVAL '1' DAY) AS DATE_TIME,
+                        SUM(DAILY_YIELD) AS rolling_sum
                     FROM
                         generator_metrics
+                    GROUP BY
+                        TUMBLE(DATE_TIME, INTERVAL '1' DAY),
+                        PLANT_ID,
+                        SOURCE_KEY
                     """
                 )
     

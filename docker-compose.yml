@@ -102,7 +102,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - './data/dashboard_data:/var/lib/grafana'
+      - './dashboard_data:/var/lib/grafana'
     depends_on:
       - timescaledb
     networks:
