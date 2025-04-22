@@ -4,18 +4,60 @@
 This side project simulates real-time streaming of solar plant data using Python, Apache Kafka, and Apache Flink. The aim is to build an end-to-end streaming pipeline that mimics telemetry from solar power plants, with generator and environmental data ingested, processed, and made ready for downstream analytics or dashboards (e.g., Grafana).
 
 ## 🛠️ Components
-- Python Simulation Scripts: Each script instance acts as a simulated solar plant. These producers emit two types of data:
-    - Generator Metrics
-    - Weather Metrics
+- **Python Simulation Scripts**  
+  Each script instance acts as a simulated solar plant. These producers emit two types of data:
+  - **Generator Metrics**
+  - **Weather Metrics**
 
-- Apache Kafka (Dockerized): Acts as the message broker. Two Kafka topics are used:
-    - generator-topic
-    - weather-topic
+- **Apache Kafka (Dockerized)**  
+  Acts as the message broker. Two Kafka topics are used:
+  - `generator-topic`
+  - `weather-topic`
 
-- Apache Flink with PyFlink (Dockerized): A single PyFlink job consumes from both Kafka topics, performs basic transformations and enrichments, and writes to stdout or a downstream sink (e.g., file, database, or dashboard integration).
+- **Apache Flink (PyFlink)**  
+  Processes streaming data from Kafka. Performs aggregations, joins, time-based windowing, and calculates derived metrics.
+
+- **TimescaleDB (PostgreSQL)**  
+  Stores the processed, time-series data using hypertables for efficient query performance and storage.
+
+- **Grafana**  
+  Connects to TimescaleDB to visualize key performance indicators through interactive, real-time dashboards.
 
 ## Architecture
 ![Image](imgs/architecture.jpg)
+
+## 📊 Solar Plant Grafana Dashboard
+
+This dashboard provides real-time and historical insights into solar plant performance, leveraging data processed using Apache Flink and stored in TimescaleDB.
+
+![Dashboard](imgs/dashboard.gif)
+
+---
+
+### 🔍 Dashboard Metrics
+
+- **🌞 Hourly Production Density**  
+  Displays total energy generated (in kWh) per hour across all sources, normalized to area or capacity.
+
+- **🔆 Hourly Average Irradiation (Module Level)**  
+  Shows the average solar irradiation received by the modules per hour.
+
+- **⚡ Average DC Power**  
+  Computes the average direct current (DC) power output from all inverters.
+
+- **🔌 Average AC Power**  
+  Displays the average alternating current (AC) power after conversion.
+
+- **🌡️ Module vs Ambient Temperature Difference**  
+  Highlights the thermal difference between panel surface and surrounding environment — useful for thermal efficiency analysis.
+
+- **🔁 DC to AC Conversion Efficiency (%)**  
+  Shows the efficiency percentage of how much DC is successfully converted to AC.
+
+- **📅 Daily Production**  
+  Summarizes total energy generated daily by each plant/source.
+
+- Apache Flink with PyFlink (Dockerized): A single PyFlink job consumes from both Kafka topics, performs basic transformations and enrichments, and writes to stdout or a downstream sink (e.g., file, database, or dashboard integration).
 
 ## 🧪 Use Cases
 - Test Flink data processing patterns like joins, windowing, or alerts.
