@@ -38,7 +38,7 @@ def read_from_kafka(env: TableEnvironment):
                         TOTAL_YIELD DOUBLE,
                         PLANT_ID INT,
                         SOURCE_KEY STRING,
-                        WATERMARK FOR DATE_TIME as DATE_TIME - INTERVAL '30' SECOND
+                        WATERMARK FOR DATE_TIME as DATE_TIME - INTERVAL '30' MINUTE
                     )
                     WITH {get_kafka_info(GENERATOR_TOPIC)}
                 """    
@@ -52,7 +52,7 @@ def read_from_kafka(env: TableEnvironment):
                         IRRADIATION DOUBLE,
                         PLANT_ID INT,
                         SOURCE_KEY STRING,
-                        WATERMARK FOR DATE_TIME as DATE_TIME - INTERVAL '30' SECOND
+                        WATERMARK FOR DATE_TIME as DATE_TIME - INTERVAL '30' MINUTE
                     )
                     WITH {get_kafka_info(WEATHER_TOPIC)}
                 """    

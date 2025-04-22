@@ -53,7 +53,7 @@ services:
     command: taskmanager
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
-      - TASK_MANAGER_NUMBER_OF_TASK_SLOTS=4
+      - TASK_MANAGER_NUMBER_OF_TASK_SLOTS=16
     volumes:
       - ./flink-connectors:/opt/flink/user-libs/
       - ./flink-jobs/src/flink_jobs:/opt/flink/jobs/
@@ -91,6 +91,20 @@ services:
     depends_on:
       - timescaledb
     restart: unless-stopped
+    networks:
+      - ms-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: solar-grafana
+    restart: unless-stopped
+    user: '0'
+    ports:
+      - '3000:3000'
+    volumes:
+      - './data/dashboard_data:/var/lib/grafana'
+    depends_on:
+      - timescaledb
     networks:
       - ms-net
 
