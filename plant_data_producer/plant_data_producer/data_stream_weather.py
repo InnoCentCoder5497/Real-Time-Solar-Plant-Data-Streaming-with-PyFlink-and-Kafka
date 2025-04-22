@@ -62,4 +62,4 @@ def stream_plant_data_weather():
         t2.join()
         
         print('INFO: Waiting for next data point')
-        time.sleep(5)
+        time.sleep(1)

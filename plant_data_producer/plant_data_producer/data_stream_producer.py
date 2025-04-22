@@ -61,4 +61,4 @@ def stream_plant_data():
         t1.join()
         
         print('INFO: Waiting for next data point')
-        time.sleep(5)
+        time.sleep(1)
