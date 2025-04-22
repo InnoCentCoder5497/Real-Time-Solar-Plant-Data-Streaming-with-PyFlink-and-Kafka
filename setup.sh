@@ -1,7 +1,7 @@
 echo "Creating Generator Topic"
-docker exec kafka ./opt/bitnami/kafka/bin/kafka-topics.sh --create --topic generator-topic --bootstrap-server localhost:9092 --partitions 3
+docker exec kafka ./opt/bitnami/kafka/bin/kafka-topics.sh --create --topic generator-topic --partitions 3 --bootstrap-server localhost:9092 
 echo "Creating Weather Topic"
-docker exec kafka ./opt/bitnami/kafka/bin/kafka-topics.sh --create --topic weather-topic --bootstrap-server localhost:9092 --partitions 3
+docker exec kafka ./opt/bitnami/kafka/bin/kafka-topics.sh --create --topic weather-topic --partitions 3 --bootstrap-server localhost:9092 
 
 echo "Topic Setup complete"
 

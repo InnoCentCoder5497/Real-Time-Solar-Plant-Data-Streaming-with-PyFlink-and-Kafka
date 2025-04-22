@@ -92,6 +92,16 @@ def read_from_kafka(env: TableEnvironment):
                     ) WITH {get_jdbc_info('solar', 'weather_metrics')}
                 """)
     
+    env.execute_sql(f"""
+                    CREATE TABLE hourly_yield_sink(
+                        window_start TIMESTAMP(3),
+                        window_end TIMESTAMP(3),
+                        PLANT_ID INT,
+                        SOURCE_KEY STRING,
+                        total_yield DOUBLE
+                    ) WITH {get_jdbc_info('solar', 'hourly_yield')}
+                """)
+    
     
     # Processing and insert to tables
     env.execute_sql("""
@@ -110,6 +120,22 @@ def read_from_kafka(env: TableEnvironment):
                         generator_metrics
                     """
                 )
+    
+    env.execute_sql(f"""
+                        INSERT INTO hourly_yield_sink
+                        SELECT
+                            TUMBLE_START(DATE_TIME, INTERVAL '1' HOUR) AS window_start,
+                            TUMBLE_END(DATE_TIME, INTERVAL '1' HOUR) AS window_end,
+                            PLANT_ID,
+                            SOURCE_KEY,
+                            SUM(DAILY_YIELD)  as total_yield
+                        FROM 
+                            generator_metrics
+                        GROUP BY
+                            TUMBLE(DATE_TIME, INTERVAL '1' HOUR),
+                            PLANT_ID,
+                            SOURCE_KEY
+                    """)
     
     env.execute_sql("""
                     INSERT INTO generator_metrics_sink

@@ -33,7 +33,19 @@ CREATE TABLE IF NOT EXISTS solar.weather_metrics
     PRIMARY KEY ("plant_id", "source_key", "date_time")
 );
 
+CREATE TABLE solar.hourly_yield
+(
+    window_start timestamp without time zone,
+    window_end timestamp without time zone,
+    plant_id integer,
+    source_key character varying,
+    total_yield double precision,
+    PRIMARY KEY (window_start, plant_id, source_key)
+);
+
+
 TRUNCATE TABLE solar.daily_yield;
+TRUNCATE TABLE solar.hourly_yield;
 TRUNCATE TABLE solar.weather_metrics;
 TRUNCATE TABLE solar.generator_metrics;
 
@@ -46,6 +58,10 @@ ALTER TABLE IF EXISTS solar.generator_metrics
 ALTER TABLE IF EXISTS solar.weather_metrics
     OWNER to admin;
 
+ALTER TABLE IF EXISTS solar.hourly_yield
+    OWNER to admin;
+
 SELECT create_hypertable('solar.daily_yield', 'date_time');
 SELECT create_hypertable('solar.weather_metrics', 'date_time');
 SELECT create_hypertable('solar.generator_metrics', 'date_time');
+SELECT create_hypertable('solar.hourly_yield', 'window_start');
